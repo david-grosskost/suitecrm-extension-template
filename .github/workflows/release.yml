@@ -10,13 +10,16 @@ on:
 
 jobs:
   release:
+    # The template itself is never released: it only hands its files to the
+    # extensions created from it, which start at 0.0.0 and release normally.
+    if: github.repository != 'david-grosskost/suitecrm-extension-template'
     permissions:
       contents: write
       pull-requests: write
       # Unused (no image), but asked by the devkit's image job: GitHub refuses
       # a called workflow that asks for more than its caller grants.
       packages: write
-    uses: david-grosskost/suitecrm-devkit/.github/workflows/release.yml@v0.26.0
+    uses: david-grosskost/suitecrm-devkit/.github/workflows/release.yml@v0.26.2
     with:
       dockerfile: ""
     secrets: inherit
