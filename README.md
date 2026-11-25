@@ -1,56 +1,40 @@
-# Modèle d'extension SuiteCRM
+# Exemple (`exemple`)
 
-Point de départ de toute extension des projets SuiteCRM : on ne modifie jamais le code de
-SuiteCRM, on lui ajoute des extensions. Ce dépôt contient une extension d'exemple
-(`exemple`) qui passe toutes les vérifications : on la remplace par la sienne.
+> **Ce dépôt est le modèle des extensions SuiteCRM.** Pour créer une extension, suivre
+> [Créer une extension](docs/developpement.md#créer-une-extension-à-partir-de-ce-modèle),
+> puis remplacer ce README et les pages de `docs/` par ceux de la nouvelle extension, en
+> gardant leur plan. Supprimer ce paragraphe.
 
-## Créer une extension
+Ce que fait l'extension, en deux ou trois phrases, en mots métier : pour qui, sur quels
+écrans, ce qui change pour l'utilisateur. Exemple : ajoute la forme juridique à la fin du
+nom des comptes (« Dupont SARL »).
 
-1. Sur GitHub, **Use this template → Create a new repository**, nommé
-   `suitecrm-ext-<slug>` (ex. `suitecrm-ext-siret-validation`).
-2. Le cloner, puis lancer `make` : le devkit s'installe (Docker suffit, pas besoin de PHP).
-3. Remplacer l'exemple :
-   - `extension.json` : `slug`, nom, description en mots métier, types ;
-   - `composer.json` : `name` en `…/suitecrm-ext-<slug>`, description ;
-   - `legacy/include/exemple/`, `tests/ExempleTest.php` : son code et ses tests.
-4. Vérifier, comme le fera la CI :
+| Fiche | |
+|---|---|
+| Version de SuiteCRM | 8.10 (`>=8.10 <9`) |
+| Types | `logic-hook` |
+| Dépend de | — |
+| Installée d'office | non |
+
+## Installer
+
+Sur une instance, par **Administration → Chargeur de module** : l'extension y figure dans
+la liste des paquets disponibles, il suffit de cliquer sur **Installer**. Depuis le
+terminal, dans suitecrm-core :
 
 ```bash
-make extension@validate   # format : manifeste, composer.json, place des fichiers
-make quality@lint         # style du code, scripts
-make quality@stan         # analyse statique (PHPStan, niveau max)
-make test@unit            # tests unitaires (PHPUnit)
+make extensions@install SLUGS="exemple"
 ```
 
-5. Pousser une branche et ouvrir une pull request : un développeur la relit avant le merge.
+La désinstallation se fait au même endroit.
 
-## Où mettre quoi
+## Documentation
 
-| Dossier | Copié dans SuiteCRM | Pour |
-|---|---|---|
-| `legacy/Extension/…` | `public/legacy/custom/Extension/…` | hooks, champs, libellés : SuiteCRM les assemble au Quick Repair. Le slug figure dans chaque nom de fichier (ex. `legacy/Extension/application/Ext/LogicHooks/<slug>.php`) |
-| `legacy/include/<slug>/` | `public/legacy/custom/include/<slug>/` | les classes PHP appelées par les hooks : la logique, testée sans SuiteCRM |
-| `backend/`, `config/` | `extensions/<slug>/` | la couche SuiteCRM 8 (services Symfony), chargée automatiquement |
-| `database/seeders/` | — | ses données de démo, chargées par le seed des démos |
-| `tests/` | — | ses tests unitaires |
-
-`make extension@validate` refuse un fichier rangé ailleurs : deux extensions ne peuvent
-ainsi jamais écrire le même fichier.
-
-## Le manifeste `extension.json`
-
-| Clé | Contenu |
+| Page | Contenu |
 |---|---|
-| `slug` | identifiant, en minuscules et tirets : le préfixe de tous ses fichiers |
-| `name` | nom, en français |
-| `description` | ce que fait l'extension, en mots métier (20 caractères au moins) |
-| `types` | parmi `logic-hook`, `fields`, `ui`, `scheduler`, `lang` |
-| `suitecrm` | versions de SuiteCRM compatibles, ex. `>=8.10 <9` |
+| [Utilisation](docs/utilisation.md) | ce que voient l'administrateur et les utilisateurs, réglages, données de démo |
+| [Fonctionnement](docs/fonctionnement.md) | fichiers, hooks, données en base, installation et désinstallation |
+| [Développement](docs/developpement.md) | créer, vérifier, tester en local, publier une version |
 
-## Ce qui vient du devkit
-
-Les commandes `make`, la CI, les hooks Git, les règles de qualité et la signature des
-classes SuiteCRM pour PHPStan viennent de
-[suitecrm-devkit](https://github.com/david-grosskost/suitecrm-devkit), à la version de
-`composer.json`. Corriger une règle se fait dans le devkit, puis on monte sa version ici
-(`composer.json` et `.github/workflows/*.yml`, ensemble).
+Les commandes, la CI et le format des extensions sont décrits dans la documentation de
+[suitecrm-devkit](https://github.com/david-grosskost/suitecrm-devkit#documentation).
