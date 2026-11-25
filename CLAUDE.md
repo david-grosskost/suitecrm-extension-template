@@ -31,11 +31,17 @@ n'est pas installé, demande à la personne de l'installer (Claude Code :
 
 | Dossier | Copié dans SuiteCRM | Pour |
 |---|---|---|
-| `legacy/Extension/…` | `public/legacy/custom/Extension/…` | déclarations (hooks, champs, libellés), assemblées au Quick Repair ; le slug dans chaque nom de fichier |
+| `legacy/Extension/…` | `public/legacy/custom/Extension/…` | déclarations (hooks, champs, libellés), assemblées à la réparation rapide ; le slug dans chaque nom de fichier |
 | `legacy/include/<slug>/` | `public/legacy/custom/include/<slug>/` | les classes PHP : toute la logique, testée sans SuiteCRM |
-| `backend/`, `config/` | `extensions/<slug>/` | la couche SuiteCRM 8 (Symfony) |
-| `database/seeders/` | — | données de démo |
+| `legacy/themes/<Nom>/` | `public/legacy/custom/themes/<Nom>/` | un thème propre à l'extension |
+| `backend/`, `config/` | `extensions/<Nom>/` | la couche SuiteCRM 8 (Symfony) ; `<Nom>` : le slug en PascalCase |
+| `app/` → `public/` | `extensions/<Nom>/public/` | le module Angular (`make front@build`, `public/` versionné) |
+| `database/install.php`, `uninstall.php` | — | lancés une seule fois à l'installation, et à la désinstallation |
+| `database/seeders/<slug>/` | catalogue de l'image | données de démo ; une classe de l'extension s'y charge depuis `custom/include/<slug>/`, jamais par un chemin relatif vers `legacy/` |
 | `tests/` | — | tests unitaires (PHPUnit) |
+
+Le détail est dans la documentation du devkit :
+[extensions](https://github.com/david-grosskost/suitecrm-devkit/blob/main/docs/extensions.md).
 
 ## Commandes (Docker suffit, pas besoin de PHP)
 
@@ -49,3 +55,10 @@ make test@unit            # tests unitaires
 Les quatre doivent passer avant toute pull request : la CI refait les mêmes. Les commandes,
 la CI et les règles viennent de suitecrm-devkit (version dans `composer.json`), que
 Dependabot propose de mettre à jour.
+
+## Documentation
+
+`README.md` (fiche de l'extension, installation, table des pages) et `docs/`
+(`utilisation.md`, `fonctionnement.md`, `developpement.md`) suivent le plan du modèle.
+Toute pull request qui change le comportement de l'extension met ces pages à jour : ce
+qu'elles disent doit rester vrai.
